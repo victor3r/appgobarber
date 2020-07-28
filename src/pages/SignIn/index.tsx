@@ -8,6 +8,7 @@ import {
   Keyboard,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
+import { useNavigation } from '@react-navigation/native';
 
 import Input from '../../components/Input';
 import Button from '../../components/Button';
@@ -25,6 +26,8 @@ import {
 
 const SignIn: React.FC = () => {
   const [showCreateAccountButton, setShowCreateAccountButton] = useState(true);
+
+  const navigation = useNavigation();
 
   useEffect(() => {
     const callbackKeyboardDidShow = () => {
@@ -75,9 +78,9 @@ const SignIn: React.FC = () => {
       </KeyboardAvoidingView>
 
       {showCreateAccountButton && (
-        <CreateAccountButton onPress={() => null}>
+        <CreateAccountButton onPress={() => navigation.navigate('SignUp')}>
           <Icon name="log-in" size={20} color="#ff9000" />
-          <CreateAccountButtonText>Criar conta</CreateAccountButtonText>
+          <CreateAccountButtonText>Criar uma conta</CreateAccountButtonText>
         </CreateAccountButton>
       )}
     </>

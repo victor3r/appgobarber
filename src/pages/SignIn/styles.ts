@@ -1,6 +1,6 @@
 import styled from 'styled-components/native';
-import { getBottomSpace } from 'react-native-iphone-x-helper';
 import { Dimensions } from 'react-native';
+import { getBottomSpace } from 'react-native-iphone-x-helper';
 
 const screenHeight = Dimensions.get('screen').height;
 
