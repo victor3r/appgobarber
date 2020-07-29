@@ -30,6 +30,7 @@
   ],
   "rules": {
     "react-hooks/rules-of-hooks": "error",
+    "no-shadow": "off",
     "react/prop-types": "off",
     "react/jsx-props-no-spreading": "off",
     "react-hooks/exhaustive-deps": "warn",
