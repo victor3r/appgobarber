@@ -1,4 +1,6 @@
 import React, {
+  useState,
+  useCallback,
   useEffect,
   useRef,
   useImperativeHandle,
@@ -32,6 +34,19 @@ const Input: React.RefForwardingComponent<InputRef, InputProps> = (
   const { fieldName, registerField, defaultValue = '', error } = useField(name);
   const inputValueRef = useRef<InputValueReference>({ value: defaultValue });
 
+  const [isFocused, setIsFocused] = useState(false);
+  const [isFilled, setIsFilled] = useState(false);
+
+  const handleInputFocus = useCallback(() => {
+    setIsFocused(true);
+  }, []);
+
+  const handleInputBlur = useCallback(() => {
+    setIsFocused(false);
+
+    setIsFilled(!!inputValueRef.current.value);
+  }, []);
+
   useImperativeHandle(ref, () => ({
     focus: () => {
       inputElementRef.current.focus();
@@ -55,10 +70,14 @@ const Input: React.RefForwardingComponent<InputRef, InputProps> = (
   }, [fieldName, registerField]);
 
   return (
-    <Container>
-      {icon && <Icon name={icon} size={20} color="#666360" />}
+    <Container isFocused={isFocused} isErrored={!!error}>
+      {icon && (
+        <Icon name={icon} size={20} isFocused={isFocused} isFilled={isFilled} />
+      )}
 
       <TextInput
+        onFocus={handleInputFocus}
+        onBlur={handleInputBlur}
         ref={inputElementRef}
         keyboardAppearance="dark"
         defaultValue={defaultValue}
