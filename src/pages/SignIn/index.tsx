@@ -16,6 +16,7 @@ import * as Yup from 'yup';
 import { Form } from '@unform/mobile';
 import { FormHandles } from '@unform/core';
 
+import { useAuth } from '../../hooks/auth';
 import getValidationErrors from '../../utils/getValidationErrors';
 
 import Input from '../../components/Input';
@@ -41,42 +42,44 @@ const SignIn: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
   const passwordInputRef = useRef<TextInput>(null);
 
+  const { signIn } = useAuth();
+
   const [showCreateAccountButton, setShowCreateAccountButton] = useState(true);
 
   const navigation = useNavigation();
 
-  const handleSignIn = useCallback(async (data: SignInFormData) => {
-    try {
-      formRef.current?.setErrors({});
+  const handleSignIn = useCallback(
+    async (data: SignInFormData) => {
+      try {
+        formRef.current?.setErrors({});
 
-      const schema = Yup.object().shape({
-        email: Yup.string()
-          .required('E-mail obrigatório')
-          .email('Digite um e-mail válido'),
-        password: Yup.string().required('Senha obrigatória'),
-      });
+        const schema = Yup.object().shape({
+          email: Yup.string()
+            .required('E-mail obrigatório')
+            .email('Digite um e-mail válido'),
+          password: Yup.string().required('Senha obrigatória'),
+        });
 
-      await schema.validate(data, {
-        abortEarly: false,
-      });
+        await schema.validate(data, {
+          abortEarly: false,
+        });
 
-      // fetch('http://192.168.1.66:3333/sessions', {
-      //   method: 'POST',
-      //   body: data,
-      // }).then(response => console.log(response));
-    } catch (err) {
-      if (err instanceof Yup.ValidationError) {
-        const validationErrors = getValidationErrors(err);
+        await signIn(data);
+      } catch (err) {
+        if (err instanceof Yup.ValidationError) {
+          const validationErrors = getValidationErrors(err);
 
-        formRef.current?.setErrors(validationErrors);
-      } else {
-        Alert.alert(
-          'Erro na autenticação',
-          'Ocorreu um erro ao fazer login, cheque as credenciais.',
-        );
+          formRef.current?.setErrors(validationErrors);
+        } else {
+          Alert.alert(
+            'Erro na autenticação',
+            'Ocorreu um erro ao fazer login, cheque as credenciais.',
+          );
+        }
       }
-    }
-  }, []);
+    },
+    [signIn],
+  );
 
   useEffect(() => {
     const callbackKeyboardDidShow = () => {
